@@ -1,0 +1,52 @@
+
+########################Setup TF on AWS EC2 instance. Ubuntu.
+
+sudo su -
+apt-get  install -y zip unzip
+wget https://releases.hashicorp.com/terraform/0.12.3/terraform_0.12.3_linux_amd64.zip
+unzip terraform_0.12.3_linux_amd64.zip
+sudo mv terraform /usr/local/bin/
+terraform version
+
+apt-get update && apt-get install python-pip
+pip install awscli
+
+
+#############################################Sample TF demo 
+
+provider "aws" {
+  region  = "us-east-2"
+  access_key    = "XXXXXXXXXXXXXXXXXX"
+  secret_key    = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+}
+# Create a VPC
+resource "aws_vpc" "main-vpc-top" {
+  cidr_block = "190.160.0.0/16"
+		tags = {
+		name = "vpc-tag" 
+			 }		
+}
+# Create EC2
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+resource "aws_instance" "web" {
+  ami           = "${data.aws_ami.ubuntu.id}"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "wt-tag"
+		}
+}
