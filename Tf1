@@ -12,6 +12,9 @@ apt-get update && apt-get install python-pip
 pip install awscli
 
 
+cmds >  terraform version,plan,apply,destroy.
+
+
 #############################################Sample TF demo 
 
 provider "aws" {
